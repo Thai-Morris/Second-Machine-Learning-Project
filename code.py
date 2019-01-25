@@ -1,34 +1,46 @@
-import pandas
+#Load libraries
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from skylearn.metrics import accuracy_score
+from sklearn import model_selection
+from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 
-'''Load training dataset'''
+#Load dataset
+url = "https://raw.githubusercontent.com/callxpert/datasets/master/iris.data.txt"
+names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'class']
+dataset = pd.read_csv(url, names=names)
 
-url = "https://raw.githubusercontent.com/callxpert/datasets/master/data-scientist-salaries.cc"
-names = ['Years-experience', 'Salary']
-dataset = pandas.read_csv(url, names=names)
-
-''' shape '''
+# shape
 print(dataset.shape)
 
-'''visualize'''
+print(dataset.head(20))
 
-dataset.plot()
-plt.show()
+array = dataset.values
+X = array[:,0:4]
+Y = array[:,4]
+x_train, x_test, y_train, y_test = model_selection.train_test_split(X, Y, test_size=0.2, random_state=7)
 
-'''Since my dataset is small, I will use nine records for training the model and 1 record to evaulute the model. Copy paste the below commands to prepare my datasets.'''
+model = KNeighborsClassifier()
+model.fit(x_train,y_train)
+predictions = model.predict(x_test)
+print(accuracy_score(y_test, predictions))
 
-X = dataset[['Years-exeperience']]
-y = dataset['Salary']
-from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=101)
+model = SVC()
+model.fit(x_train,y_train)
+predictions = model.predict(x_test)
+print(accuracy_score(y_test, predictions))
 
-from sklearn.linear_model import LinearRegression
-model = LinearRegression()
-model.fit(X_train,y_train)
+model = RandomForestClassifier(n_estimators=5)
+model.fit(x_train,y_train)
+predictions = model.predict(x_test)
+print(accuracy_score(y_test, predictions))
 
-predictions = model.predict(X_test)
-print(accuracy_score(y_test,predictions))
-
-print(model.predict(6.3))
+model = LogisticRegression()
+model.fit(x_train,y_train)
+predictions = model.predict(x_test)
+print(accuracy_score(y_test, predictions))
